@@ -3787,6 +3787,20 @@ input, select, textarea {
 
 		}
 
-		.fa:hover {
-			color: rgb(250, 220, 22);
-		}
+	/* Rating */
+	span.fa{
+		padding-right: 100px;
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: center;
+		float: right;
+	}
+
+	span.fa:hover + span.fa + span.fa + span.fa + span.fa,
+	span.fa:hover + span.fa + span.fa + span.fa,
+	span.fa:hover + span.fa + span.fa,
+	span.fa:hover + span.fa,
+	span.fa:hover
+	{
+		color: rgb(223, 187, 11);
+	}
