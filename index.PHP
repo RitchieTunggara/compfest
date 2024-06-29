@@ -1,4 +1,6 @@
-
+<?php
+	session_start();
+?>
 <!DOCTYPE HTML>
 <!--
 	Stellar by HTML5 UP
@@ -15,8 +17,18 @@
 	</head>
 	<body class="is-preload">
 
+		
+
 		<!-- Wrapper -->
 			<div id="wrapper">
+				<div class="top-left-buttons">
+					<?php if (isset($_SESSION['username'])): ?>
+						<a href="PHP/logout.php">Logout</a>
+					<?php else: ?>
+						<a href="login.php">Login</a>
+						<a href="register.php">Register</a>
+					<?php endif; ?>
+				</div>
 
 				<!-- Header -->
 					<header id="header" class="alt">
@@ -92,9 +104,8 @@
 						<!-- Second Section -->
 							<section id="second" class="main special">
 								<header class="major">
-									<h2>Ipsum consequat</h2>
-									<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br />
-									posuere. Nulla massa urna, fermentum eget quam aliquet.</p>
+									<h2>Our Branchs</h2>
+									<p>We have so many branchs around the world!</p>
 								</header>
 								<ul class="statistics">
 									<li class="style1">
@@ -132,30 +143,54 @@
 									<h2>Review</h2>
 									<fieldset>
 										<legend>Form</legend>
-										<form name="frmContact" method="post" action="contact.php">
-										<p>
-											<label for="Name">Name </label>
-											<input type="text" name="txtName" id="txtName">
-										</p>
-										<p>
-											<label for="message">Message</label>
-											<textarea name="txtMessage" id="txtMessage"></textarea>
-										</p>
-										<p>
-											<label for="message">Rating</label>
-										</p>
-										<span style="font-size: 250%" class="fa fa-star"></span>
-										<span style="font-size: 250%" class="fa fa-star"></span>
-										<span style="font-size: 250%" class="fa fa-star"></span>
-										<span style="font-size: 250%" class="fa fa-star"></span>
-										<span style="font-size: 250%" class="fa fa-star"></span>
-										<p>&nbsp;</p>
-										<p>
-											<input type="submit" name="Submit" id="Submit" value="Submit">
-										</p>
+										<form method="post" action="PHP/submitReview.PHP">
+											<p>
+												<label for="message">Message</label>
+												<textarea name="txtMessage" id="txtMessage" required></textarea>
+											</p>
+											<p>
+												<label for="rating">Rating</label>
+											</p>
+											<div class="star">
+												<span onclick="setRating(5)"style="font-size: 250%" class="fa fa-star"></span>
+												<span onclick="setRating(4)" style="font-size: 250%" class="fa fa-star"></span>
+												<span onclick="setRating(3)" style="font-size: 250%" class="fa fa-star"></span>
+												<span onclick="setRating(2)" style="font-size: 250%" class="fa fa-star"></span>
+												<span onclick="setRating(1)" style="font-size: 250%" class="fa fa-star"></span>
+												<input type="hidden" name="rating" id="rating" value="0" required>
+											</div>
+											<p>&nbsp;</p>
+											<p>
+											<?php if (isset($_SESSION['username'])): ?>
+												<input onclick="button1()" type="submit" name="rateButton" id="Submit" value="Submit">
+											<?php else: ?>
+												<p>You need to <a href="login.php">Login</a> first to give a rating!</p>
+											<?php endif; ?>
+											</p>
 										</form>
 										</fieldset>
 								</header>
+								<script>
+									function setRating(rating) {
+										document.getElementById('rating').value = rating;
+										// alert(rating + ' Star');
+										$_SESSION['rating'] = rating;
+									}
+									
+								</script>
+								<script>
+									function setRating(rating) {
+										document.getElementById('rating').value = rating;
+										var stars = document.getElementsByClassName('fa-star');
+										for (var i = 0; i < stars.length; i++) {
+											stars[i].classList.remove('checked');
+										}
+										for (var i = 0; i < rating; i++) {
+											stars[4-i].classList.add('checked');
+										}
+									}
+								</script>
+
 								<footer class="major">
 									<ul class="actions special">
 										<li><a href="generic.html" class="button primary">Get Started</a></li>
@@ -187,15 +222,6 @@
 							</dl>
 						</section>
 						
-						<section>
-							<ul class="icons">
-								<li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
-								<li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
-								<li><a href="#" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
-								<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
-								<li><a href="#" class="icon brands fa-dribbble alt"><span class="label">Dribbble</span></a></li>
-							</ul>
-						</section>
 						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
 					</footer>
 
