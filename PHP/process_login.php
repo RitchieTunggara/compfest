@@ -4,7 +4,7 @@
     $pass = $_POST['password'];
 
     // Memeriksa apakah username ada dan password cocok
-    $sql = "SELECT userId, password FROM user WHERE username = ?";
+    $sql = "SELECT userId, password, role FROM user WHERE username = ?";
     $stmt = $conn->prepare($sql);
 
     if (!$stmt) {
@@ -14,7 +14,7 @@
     $stmt->bind_param("s", $user);
     $stmt->execute();
     $stmt->store_result();
-    $stmt->bind_result($id, $hashed_password);
+    $stmt->bind_result($id, $hashed_password, $role);
     $stmt->fetch();
 
     if ($stmt->num_rows > 0 && password_verify($pass, $hashed_password)) {
@@ -22,8 +22,13 @@
             // Menyimpan informasi pengguna dalam sesi
             $_SESSION['username'] = $user;
             echo "Login successful. Welcome, " . htmlspecialchars($user) . "!";
+
             // Redirect ke halaman lain jika login berhasil
-            header('Location: ../index.php');
+            if ($role == 'admin') {
+                header('Location: ../admin.php');
+            } else {
+                header('Location: ../index.php');
+            }
             exit();
         }
     } else {

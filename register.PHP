@@ -10,8 +10,16 @@
     <form action="PHP/process_register.php" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
+        
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required><br><br>
+        
         <input type="submit" value="Register">
     </form>
     <p>Already have an account? <a href="login.php">Login here</a></p>

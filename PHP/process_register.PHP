@@ -4,6 +4,9 @@
     // Mendapatkan data dari form
     $user = $_POST['username'];
     $pass = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $role = "user";
 
     // Memeriksa apakah username sudah ada
     $sql = "SELECT userId FROM user WHERE username = ?";
@@ -25,14 +28,14 @@
         exit();
     }
 
-    $sql = "INSERT INTO user (username, password) VALUES (?, ?)";
+    $sql = "INSERT INTO user (username, password, email, phone, role) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     if (!$stmt) {
         die("Error preparing statement for user insertion: " . $conn->error);
     }
 
-    $stmt->bind_param("ss", $user, $pass);
+    $stmt->bind_param("sssss", $user, $pass, $email, $phone, $role);
 
     if ($stmt->execute()) {
         echo "Registration successful. You can now <a href='../login.php'>login</a>.";
