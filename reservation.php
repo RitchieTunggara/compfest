@@ -47,49 +47,95 @@
             background-color: #45a049;
         }
     </style>
+    <script>
+        function setMinDate() {
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').setAttribute('min', today);
+        }
+    </script>
 </head>
-<body>
+<body onload="setMinDate()">
 
 <div class="container">
     <h2>Reservation Form</h2>
-    <form action="submit_reservation.php" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
 
-        <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" required>
+    <?php if (!isset($_POST['branch'])): ?>
+        <form action="" method="post">
+            <label for="branch">Branch:</label>
+            <select id="branch" name="branch" required onchange="this.form.submit()">
+                <option value="">Select a branch</option>
+                <?php
+                    require "PHP/connect.php";
+                    $sql = "SELECT BranchId, BranchName FROM branch";
+                    $result = $conn->query($sql);
 
-        <label for="service">Service:</label>
-        <select id="service" name="service" required>
-            <option value="haircut">Haircut and Styling</option>
-            <option value="massage">Manicure and Pedicure</option>
-            <option value="manicure">Facial Treatments</option>
-        </select>
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row['BranchId'] . "'>" . $row['BranchName'] . "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>No branches available</option>";
+                    }
+                    
+                    $conn->close();
+                ?>
+            </select>
+        </form>
+    <?php endif; ?>
 
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required>
+    <?php if (isset($_POST['branch'])): ?>
+        <form action="PHP/submit_reservation.php" method="post">
+            <input type="hidden" name="branch" value="<?php echo $_POST['branch']; ?>">
 
-        <label for="time">Time:</label>
-        <select id="time" name="time" required>
-            <option value="slot1">09.00 AM - 10.00 AM</option>
-            <option value="slot1">10.00 AM - 11.00 AM</option>
-            <option value="slot1">11.00 AM - 12.00 PM</option>
-            <option value="slot1">12.00 PM - 01.00 PM</option>
-            <option value="slot1">01.00 PM - 02.00 PM</option>
-            <option value="slot1">02.00 PM - 03.00 PM</option>
-            <option value="slot1">03.00 PM - 04.00 PM</option>
-            <option value="slot1">04.00 PM - 05.00 PM</option>
-            <option value="slot1">05.00 PM - 06.00 PM</option>
-            <option value="slot1">06.00 PM - 07.00 PM</option>
-            <option value="slot1">07.00 PM - 08.00 PM</option>
-            <option value="slot1">08.00 PM - 09.00 PM</option>
-        </select>
+            <label for="service">Service:</label>
+            <select id="service" name="service" required>
+                <option value="">Select a service</option>
+                <?php
+                    require "PHP/connect.php";
+                    $branchId = $_POST['branch'];
+                    $stmt = $conn->prepare("SELECT DISTINCT service.serviceId, service.serviceName
+                                            FROM service
+                                            JOIN servicelist ON servicelist.serviceId = service.serviceId
+                                            WHERE servicelist.branchId = ?");
+                    $stmt->bind_param("i", $branchId);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" required>
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row['serviceId'] . "'>" . $row['serviceName'] . "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>No services available</option>";
+                    }
 
-        <button type="submit">Submit Reservation</button>
-    </form>
+                    $stmt->close();
+                    $conn->close();
+                ?>
+            </select>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Time:</label>
+            <select id="time" name="time" required>
+                <option value="slot1">09.00 AM - 10.00 AM</option>
+                <option value="slot2">10.00 AM - 11.00 AM</option>
+                <option value="slot3">11.00 AM - 12.00 PM</option>
+                <option value="slot4">12.00 PM - 01.00 PM</option>
+                <option value="slot5">01.00 PM - 02.00 PM</option>
+                <option value="slot6">02.00 PM - 03.00 PM</option>
+                <option value="slot7">03.00 PM - 04.00 PM</option>
+                <option value="slot8">04.00 PM - 05.00 PM</option>
+                <option value="slot9">05.00 PM - 06.00 PM</option>
+                <option value="slot10">06.00 PM - 07.00 PM</option>
+                <option value="slot11">07.00 PM - 08.00 PM</option>
+                <option value="slot12">08.00 PM - 09.00 PM</option>
+            </select>
+
+            <button type="submit">Submit Reservation</button>
+        </form>
+    <?php endif; ?>
 </div>
 
 </body>
